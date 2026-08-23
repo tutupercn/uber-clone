@@ -1,0 +1,31 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    "drivers": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    "onlineDrivers": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "tripRequest": {
+      ".read": "auth != null",
+      ".indexOn": ["userID", "driverID", "status"],
+      "$tripId": {
+        ".write": "auth != null && (auth.token.admin === true || (!data.exists() && newData.child('userID').val() === auth.uid) || data.child('userID').val() === auth.uid || data.child('driverID').val() === auth.uid || newData.child('driverID').val() === auth.uid)"
+      }
+    }
+  }
+}
