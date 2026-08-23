@@ -27,8 +27,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Uber Admin Panel',
-        theme: ThemeData(primarySwatch: Colors.pink),
+        title: 'TAG Kocaeli Yönetim Paneli',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00A884)),
+          useMaterial3: true,
+        ),
         home: const SideNavigationDrawer(),
       ),
     );
