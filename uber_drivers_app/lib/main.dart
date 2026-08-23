@@ -10,6 +10,7 @@ import 'package:uber_drivers_app/providers/dashboard_provider.dart';
 import 'package:uber_drivers_app/providers/registration_provider.dart';
 import 'package:uber_drivers_app/providers/trips_provider.dart';
 import 'package:uber_drivers_app/widgets/blocked_screen.dart';
+import 'package:uber_drivers_app/config/app_config.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
@@ -50,10 +51,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
-        title: 'Uber Drivers App',
+        title: '${AppConfig.appName} Sürücü',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppConfig.primaryColor),
           useMaterial3: true,
         ),
         home: const AuthCheck(),
