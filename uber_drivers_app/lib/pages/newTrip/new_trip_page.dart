@@ -1,16 +1,13 @@
-import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_drivers_app/methods/common_method.dart';
-import 'package:uber_drivers_app/methods/map_theme_methods.dart';
 import 'package:uber_drivers_app/models/trip_details.dart';
+import 'package:uber_drivers_app/widgets/free_map_view.dart';
 import 'package:uber_drivers_app/widgets/loading_dialog.dart';
 import 'package:uber_drivers_app/widgets/payment_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,17 +23,8 @@ class NewTripPage extends StatefulWidget {
 }
 
 class _NewTripPageState extends State<NewTripPage> {
-  final Completer<GoogleMapController> googleMapCompleterController =
-      Completer<GoogleMapController>();
-  GoogleMapController? controllerGoogleMap;
-  MapThemeMethods themeMethods = MapThemeMethods();
-  double googleMapPaddingFromBottom = 0;
   List<LatLng> coordinatesPolylineLatLngList = [];
   PolylinePoints polylinePoints = PolylinePoints();
-  Set<Marker> markersSet = Set<Marker>();
-  Set<Circle> circlesSet = Set<Circle>();
-  Set<Polyline> polyLinesSet = Set<Polyline>();
-  BitmapDescriptor? carMarkerIcon;
   bool directionRequested = false;
   String statusOfTrip = "accepted";
   String durationText = "";
@@ -44,19 +32,6 @@ class _NewTripPageState extends State<NewTripPage> {
   Color buttonColor = Colors.indigoAccent;
   String distanceText = "";
   CommonMethods commonMethods = CommonMethods();
-
-  makeMarker() {
-    if (carMarkerIcon == null) {
-      ImageConfiguration configuration =
-          createLocalImageConfiguration(context, size: Size(2, 2));
-
-      BitmapDescriptor.fromAssetImage(
-              configuration, "assets/images/tracking.png")
-          .then((valueIcon) {
-        carMarkerIcon = valueIcon;
-      });
-    }
-  }
 
   obtainDirectionAndDrawRoute(
       sourceLocationLatLng, destinationLocationLatLng) async {
@@ -95,100 +70,7 @@ class _NewTripPageState extends State<NewTripPage> {
         print("No polyline points found");
       }
 
-      // Draw polyline
-      polyLinesSet.clear();
-
-      setState(() {
-        Polyline polyline = Polyline(
-            polylineId: const PolylineId("routeID"),
-            color: Colors.amber,
-            points: coordinatesPolylineLatLngList,
-            jointType: JointType.round,
-            width: 5,
-            startCap: Cap.roundCap,
-            endCap: Cap.roundCap,
-            geodesic: true);
-
-        polyLinesSet.add(polyline);
-      });
-
-      // Fit the polyline on google map
-      LatLngBounds boundsLatLng;
-
-      if (sourceLocationLatLng.latitude > destinationLocationLatLng.latitude &&
-          sourceLocationLatLng.longitude >
-              destinationLocationLatLng.longitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: destinationLocationLatLng,
-          northeast: sourceLocationLatLng,
-        );
-      } else if (sourceLocationLatLng.longitude >
-          destinationLocationLatLng.longitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: LatLng(sourceLocationLatLng.latitude,
-              destinationLocationLatLng.longitude),
-          northeast: LatLng(destinationLocationLatLng.latitude,
-              sourceLocationLatLng.longitude),
-        );
-      } else if (sourceLocationLatLng.latitude >
-          destinationLocationLatLng.latitude) {
-        boundsLatLng = LatLngBounds(
-          southwest: LatLng(destinationLocationLatLng.latitude,
-              sourceLocationLatLng.longitude),
-          northeast: LatLng(sourceLocationLatLng.latitude,
-              destinationLocationLatLng.longitude),
-        );
-      } else {
-        boundsLatLng = LatLngBounds(
-          southwest: sourceLocationLatLng,
-          northeast: destinationLocationLatLng,
-        );
-      }
-
-      controllerGoogleMap!
-          .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 72));
-
-      // Add marker
-      Marker sourceMarker = Marker(
-        markerId: const MarkerId('sourceID'),
-        position: sourceLocationLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-      );
-
-      Marker destinationMarker = Marker(
-        markerId: const MarkerId('destinationID'),
-        position: destinationLocationLatLng,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      );
-
-      setState(() {
-        markersSet.add(sourceMarker);
-        markersSet.add(destinationMarker);
-      });
-
-      // Add circle
-      Circle sourceCircle = Circle(
-        circleId: const CircleId('sourceCircleID'),
-        strokeColor: Colors.orange,
-        strokeWidth: 4,
-        radius: 14,
-        center: sourceLocationLatLng,
-        fillColor: Colors.green,
-      );
-
-      Circle destinationCircle = Circle(
-        circleId: const CircleId('destinationCircleID'),
-        strokeColor: Colors.green,
-        strokeWidth: 4,
-        radius: 14,
-        center: destinationLocationLatLng,
-        fillColor: Colors.orange,
-      );
-
-      setState(() {
-        circlesSet.add(sourceCircle);
-        circlesSet.add(destinationCircle);
-      });
+      if (mounted) setState(() {});
     } catch (e, stackTrace) {
       // Catch and log any errors that occur
       print("Error in obtainDirectionAndDrawRoute: $e");
@@ -197,34 +79,11 @@ class _NewTripPageState extends State<NewTripPage> {
   }
 
   getLiveLocationUpdatesOfDriver() {
-    LatLng lastPositionLatLng = LatLng(0, 0);
-
     positionStreamNewTripPage =
         Geolocator.getPositionStream().listen((Position positionDriver) {
       driverCurrentPosition = positionDriver;
 
-      LatLng driverCurrentPositionLatLng = LatLng(
-          driverCurrentPosition!.latitude, driverCurrentPosition!.longitude);
-
-      Marker carMarker = Marker(
-        markerId: const MarkerId("carMarkerID"),
-        position: driverCurrentPositionLatLng,
-        icon: carMarkerIcon!,
-        infoWindow: const InfoWindow(title: "My Location"),
-      );
-
-      setState(() {
-        CameraPosition cameraPosition =
-            CameraPosition(target: driverCurrentPositionLatLng, zoom: 16);
-        controllerGoogleMap!
-            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-
-        markersSet
-            .removeWhere((element) => element.markerId.value == "carMarkerID");
-        markersSet.add(carMarker);
-      });
-
-      lastPositionLatLng = driverCurrentPositionLatLng;
+      if (mounted) setState(() {});
 
       //update Trip Details Information
       updateTripDetailsInformation();
@@ -386,47 +245,47 @@ class _NewTripPageState extends State<NewTripPage> {
     // TODO: implement initState
     super.initState();
     saveDriverDataToTripInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (driverCurrentPosition == null) return;
+      final driverLocation = LatLng(
+        driverCurrentPosition!.latitude,
+        driverCurrentPosition!.longitude,
+      );
+      await obtainDirectionAndDrawRoute(
+        driverLocation,
+        widget.newTripDetailsInfo!.pickUpLatLng,
+      );
+      getLiveLocationUpdatesOfDriver();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    makeMarker();
     return SafeArea(
       child: Scaffold(
         body: Stack(
           children: [
             SafeArea(
-              child: GoogleMap(
-                padding: EdgeInsets.only(bottom: googleMapPaddingFromBottom),
-                mapType: MapType.normal,
-                myLocationEnabled: true,
-                zoomControlsEnabled: false,
-                myLocationButtonEnabled: false,
-                markers: markersSet,
-                circles: circlesSet,
-                polylines: polyLinesSet,
-                initialCameraPosition: googlePlexInitialPosition,
-                onMapCreated: (GoogleMapController mapController) async {
-                  controllerGoogleMap = mapController;
-                  //themeMethods.updateMapTheme(controllerGoogleMap!);
-                  googleMapCompleterController.complete(controllerGoogleMap);
-
-                  setState(() {
-                    googleMapPaddingFromBottom = 262;
-                  });
-
-                  var driverCurrentLocationLatLng = LatLng(
-                      driverCurrentPosition!.latitude,
-                      driverCurrentPosition!.longitude);
-
-                  var userPickUpLocationLatLng =
-                      widget.newTripDetailsInfo!.pickUpLatLng;
-
-                  await obtainDirectionAndDrawRoute(
-                      driverCurrentLocationLatLng, userPickUpLocationLatLng);
-
-                  getLiveLocationUpdatesOfDriver();
-                },
+              child: FreeMapView(
+                latitude: driverCurrentPosition?.latitude ?? 40.8269,
+                longitude: driverCurrentPosition?.longitude ?? 29.3747,
+                zoom: 15,
+                pickup: widget.newTripDetailsInfo?.pickUpLatLng == null
+                    ? null
+                    : MapCoordinate(
+                        widget.newTripDetailsInfo!.pickUpLatLng!.latitude,
+                        widget.newTripDetailsInfo!.pickUpLatLng!.longitude,
+                      ),
+                dropoff: widget.newTripDetailsInfo?.dropOffLatLng == null
+                    ? null
+                    : MapCoordinate(
+                        widget.newTripDetailsInfo!.dropOffLatLng!.latitude,
+                        widget.newTripDetailsInfo!.dropOffLatLng!.longitude,
+                      ),
+                route: coordinatesPolylineLatLngList
+                    .map((point) =>
+                        MapCoordinate(point.latitude, point.longitude))
+                    .toList(),
               ),
             ),
             Positioned(
