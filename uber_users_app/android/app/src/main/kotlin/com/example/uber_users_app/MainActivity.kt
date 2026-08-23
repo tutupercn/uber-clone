@@ -1,4 +1,4 @@
-package com.example.uber_users_app
+package com.kocaelitag.yolcu
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
