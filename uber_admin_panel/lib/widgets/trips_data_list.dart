@@ -40,7 +40,7 @@ class _TripsDataListState extends State<TripsDataList> {
         if (snapshotData.hasError) {
           return const Center(
             child: Text(
-              "Error Occurred. Try Later.",
+              "Bir hata oluştu. Daha sonra tekrar deneyin.",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
@@ -93,7 +93,7 @@ class _TripsDataListState extends State<TripsDataList> {
                     ),
                     cMethods.data(
                       1,
-                      Text("\Rs " + itemsList[index]["fareAmount"].toString(), style: TextStyle(fontSize: 12)),
+                      Text("₺${itemsList[index]["fareAmount"]}", style: const TextStyle(fontSize: 12)),
                     ),
                     cMethods.data(
                       1,
@@ -127,7 +127,7 @@ class _TripsDataListState extends State<TripsDataList> {
                             );
                           },
                           child: const Text(
-                            "View More",
+                            "Haritada gör",
                             style: TextStyle(
                               color: Colors.white,
                             fontSize: 12,
