@@ -30,7 +30,7 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Set Bid Amount'),
+          title: const Text('Fiyat teklifinizi belirleyin'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -46,7 +46,7 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
                   ),
                   errorText: _validateBidAmount(),
                   helperText:
-                      'Bid must be between Rs. ${_calculateLowerLimit().toStringAsFixed(2)}\nand Rs. ${_calculateUpperLimit().toStringAsFixed(2)}',
+                      'Teklif ₺${_calculateLowerLimit().toStringAsFixed(2)} ile\n₺${_calculateUpperLimit().toStringAsFixed(2)} arasında olmalıdır.',
                   helperStyle: const TextStyle(color: Colors.black),
                 ),
                 style: const TextStyle(color: Colors.white),
@@ -64,7 +64,7 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
                 Navigator.of(context).pop(); // Close the dialog
               },
               child: const Text(
-                'Cancel',
+                'Vazgeç',
                 style: TextStyle(color: Colors.black),
               ),
             ),
@@ -77,7 +77,7 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
                 }
               },
               child: const Text(
-                "OK",
+                "Onayla",
                 style: TextStyle(color: Colors.black),
               ),
             ),
@@ -88,24 +88,27 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
   }
 
   String? _validateBidAmount() {
-    double fare = widget.initialFareAmount!;
+    final double? fare = widget.initialFareAmount;
+    if (fare == null || fare <= 0) {
+      return 'Önce araç ve güzergâh seçin.';
+    }
     double bid = double.tryParse(bidController.text) ?? 0.0;
 
     double lowerLimit = _calculateLowerLimit();
     double upperLimit = _calculateUpperLimit();
 
     if (bid < lowerLimit || bid > upperLimit) {
-      return 'Bid must be between Rs. ${lowerLimit.toStringAsFixed(2)}\nand Rs. ${upperLimit.toStringAsFixed(2)}';
+      return 'Teklif ₺${lowerLimit.toStringAsFixed(2)} ile\n₺${upperLimit.toStringAsFixed(2)} arasında olmalıdır.';
     }
     return null;
   }
 
   double _calculateLowerLimit() {
-    return widget.initialFareAmount! * 0.90; // 10% lower
+    return (widget.initialFareAmount ?? 0) * 0.90;
   }
 
   double _calculateUpperLimit() {
-    return widget.initialFareAmount! * 1.20; // 20% higher
+    return (widget.initialFareAmount ?? 0) * 1.20;
   }
 
   @override
@@ -120,8 +123,8 @@ class _BidDialogWidgetState extends State<BidDialogWidget> {
       onPressed: () => _showBidDialog(context),
       child: Text(
         _enteredBidAmount == null || _validateBidAmount() != null
-            ? "Set Bid"
-            : 'Bid: Rs. ${_enteredBidAmount}',
+            ? "Fiyat teklif et"
+            : 'Teklif: ₺$_enteredBidAmount',
         style: const TextStyle(color: Colors.white),
       ),
     );
