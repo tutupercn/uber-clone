@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:uber_users_app/appInfo/app_info.dart';
 import 'package:uber_users_app/appInfo/auth_provider.dart';
 import 'package:uber_users_app/authentication/register_screen.dart';
+import 'package:uber_users_app/config/app_config.dart';
 import 'package:uber_users_app/global/global_var.dart';
 import 'package:uber_users_app/pages/blocked_screen.dart';
 import 'package:uber_users_app/pages/home_page.dart';
@@ -14,7 +15,7 @@ import 'package:uber_users_app/pages/home_page.dart';
 late Size mq;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = stripePublishedKey;
+  Stripe.publishableKey = AppConfig.stripePublishableKey;
   await Firebase.initializeApp();
   await Permission.locationWhenInUse.isDenied.then((valueOfPermission) {
     if (valueOfPermission) {
@@ -36,10 +37,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthenticationProvider())
       ],
       child: MaterialApp(
-        title: 'Uber User App',
+        title: '${AppConfig.appName} Yolcu',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppConfig.primaryColor),
           useMaterial3: true,
         ),
         home: const AuthCheck(),
