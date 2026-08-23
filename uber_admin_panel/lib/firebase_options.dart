@@ -13,6 +13,7 @@ abstract final class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
       case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
         throw UnsupportedError(
           'Kocaeli TAG yönetim paneli şu anda yalnızca web için yapılandırıldı.',
         );
