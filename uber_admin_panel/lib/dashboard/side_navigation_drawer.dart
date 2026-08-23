@@ -46,7 +46,7 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
         backgroundColor: Color.fromARGB(221, 39, 57, 99),
         iconTheme: IconThemeData(color: Colors.white),
         title: const Text(
-          "Admin Web Panel",
+          "Kocaeli TAG Yönetim",
           style: TextStyle(
               fontWeight: FontWeight.w600, color: Colors.white, fontSize: 14),
         
@@ -59,22 +59,22 @@ class _SideNavigationDrawerState extends State<SideNavigationDrawer> {
         activeTextStyle: TextStyle(color: Colors.white),
         items: const [
           AdminMenuItem(
-            title: "Drivers",
+            title: "Sürücüler",
             route: DriverPage.id,
             icon: CupertinoIcons.car_detailed,
           ),
           AdminMenuItem(
-            title: "Users",
+            title: "Kullanıcılar",
             route: UserPage.id,
             icon: CupertinoIcons.person_2_fill,
           ),
           AdminMenuItem(
-            title: "Trips",
+            title: "Yolculuklar",
             route: TripsPage.id,
             icon: CupertinoIcons.location_fill,
           ),
           AdminMenuItem(
-            title: "Earnings",
+            title: "Kazançlar",
             route: TripsPage.id,
             icon: CupertinoIcons.money_dollar,
           ),
