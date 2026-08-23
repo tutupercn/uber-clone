@@ -53,7 +53,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
         elevation: 0,
         centerTitle: true,
         title: const Text(
-          'Profile Setup',
+          'Profil bilgileri',
           style: TextStyle(),
         ),
       ),
@@ -69,7 +69,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
                     children: [
                       // textFormFields
                       myTextFormField(
-                        hintText: 'Enter Your Full Name',
+                        hintText: 'Adınız ve soyadınız',
                         icon: Icons.account_circle,
                         textInputType: TextInputType.name,
                         maxLines: 1,
@@ -82,7 +82,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
                         height: 20,
                       ),
                       myTextFormField(
-                        hintText: 'Enter Your Email Address',
+                        hintText: 'E-posta adresiniz',
                         icon: Icons.account_circle,
                         textInputType: TextInputType.emailAddress,
                         maxLines: 1,
@@ -94,7 +94,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
                         height: 20,
                       ),
                       myTextFormField(
-                        hintText: 'Enter your phone number',
+                        hintText: 'Telefon numaranız',
                         icon: Icons.phone,
                         textInputType: TextInputType.number,
                         maxLines: 1,
@@ -126,7 +126,7 @@ class _UserInformationScreenState extends State<UserInformationScreen> {
                               color: Colors.white,
                             )
                           : const Text(
-                              "Continue",
+                              "Devam et",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
