@@ -28,7 +28,7 @@ class _DriversDataListState extends State<DriversDataList> {
           print("Error: ${snapshotData.error}");
           return const Center(
             child: Text(
-              "Error occurred. Try later",
+              "Bir hata oluştu. Daha sonra tekrar deneyin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -42,7 +42,7 @@ class _DriversDataListState extends State<DriversDataList> {
         if (snapshotData.connectionState == ConnectionState.none) {
           return const Center(
             child: Text(
-              "No connection. Please check your internet.",
+              "Bağlantı yok. İnternetinizi kontrol edin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -52,7 +52,7 @@ class _DriversDataListState extends State<DriversDataList> {
             snapshotData.data?.snapshot.value == null) {
           return const Center(
             child: Text(
-              "No data available",
+              "Henüz sürücü bulunmuyor.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -100,9 +100,9 @@ class _DriversDataListState extends State<DriversDataList> {
                   listItems[index]["earnings"] != ""
                       ? Text(
                           //style: const TextStyle(color: Colors.white),
-                          "Rs ${listItems[index]["earnings"].toStringAsFixed(2)}")
+                          "₺${listItems[index]["earnings"].toStringAsFixed(2)}")
                       : const Text(
-                          "Rs 0.00",
+                          "₺0,00",
                           //style: const TextStyle(color: Colors.white),
                         ),
                 ),
@@ -128,7 +128,7 @@ class _DriversDataListState extends State<DriversDataList> {
                                       listItems[index]["blockStatus"]);
                             },
                             child: const Text(
-                              "Block",
+                              "Engelle",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -155,7 +155,7 @@ class _DriversDataListState extends State<DriversDataList> {
                                       listItems[index]["blockStatus"]);
                             },
                             child: const Text(
-                              "Unblock",
+                              "Engeli kaldır",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -190,7 +190,7 @@ class _DriversDataListState extends State<DriversDataList> {
                         );
                       },
                       child: const Text(
-                        "View More",
+                        "Detayları gör",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -207,4 +207,3 @@ class _DriversDataListState extends State<DriversDataList> {
     );
   }
 }
-
