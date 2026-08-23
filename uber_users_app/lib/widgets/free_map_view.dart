@@ -25,6 +25,7 @@ class FreeMapView extends StatelessWidget {
     final center = LatLng(latitude, longitude);
 
     return FlutterMap(
+      key: ValueKey('$latitude,$longitude,$zoom'),
       options: MapOptions(initialCenter: center, initialZoom: zoom),
       children: [
         TileLayer(
