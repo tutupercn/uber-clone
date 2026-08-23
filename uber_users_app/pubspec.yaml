@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter:
+  flutter_map: ^8.3.1
+  latlong2: ^0.9.1
   connectivity_plus: 
   firebase_auth:
   cloud_firestore:
