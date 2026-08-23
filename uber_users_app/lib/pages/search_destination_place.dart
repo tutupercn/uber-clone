@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uber_users_app/appInfo/app_info.dart';
-import 'package:uber_users_app/global/global_var.dart';
 import 'package:uber_users_app/main.dart';
 import 'package:uber_users_app/methods/common_methods.dart';
 import 'package:uber_users_app/models/prediction_model.dart';
@@ -20,25 +21,52 @@ class _SearchDestinationPlaceState extends State<SearchDestinationPlace> {
       TextEditingController();
 
   List<PredictionModel> dropOffPredictionsPlacesList = [];
-  searchLocation(String locationName) async {
-    if (locationName.length > 1) {
-      String apiPlacesUrl =
-          "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$locationName&key=$googleMapKey&components=country:pk";
-      print('API PLACE URL $apiPlacesUrl');
+  Timer? _searchDebounce;
 
-      var responseFromPlacesAPI =
-          await CommonMethods.sendRequestToAPI(apiPlacesUrl);
+  void scheduleSearch(String locationName) {
+    _searchDebounce?.cancel();
+    if (locationName.trim().length < 3) {
+      setState(() => dropOffPredictionsPlacesList = []);
+      return;
+    }
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 1100),
+      () => searchLocation(locationName.trim()),
+    );
+  }
+
+  searchLocation(String locationName) async {
+    if (locationName.length > 2) {
+      final apiPlacesUrl = Uri.https(
+        'nominatim.openstreetmap.org',
+        '/search',
+        {
+          'format': 'jsonv2',
+          'q': locationName,
+          'countrycodes': 'tr',
+          'accept-language': 'tr',
+          'addressdetails': '1',
+          'limit': '5',
+        },
+      ).toString();
+
+      var responseFromPlacesAPI = await CommonMethods.sendRequestToAPI(
+        apiPlacesUrl,
+        headers: const {
+          'User-Agent': 'KocaeliTAG/1.0 (com.kocaelitag.yolcu)',
+          'Accept-Language': 'tr',
+        },
+      );
 
       if (responseFromPlacesAPI == "error") {
         return;
       }
 
-      if (responseFromPlacesAPI["status"] == "OK") {
-        var predictionsResultsInJson = responseFromPlacesAPI["predictions"];
-        var predictionsList = (predictionsResultsInJson as List)
-            .map(
+      if (responseFromPlacesAPI is List) {
+        var predictionsList = responseFromPlacesAPI
+            .map<PredictionModel>(
               (eachPlacePrediction) =>
-                  PredictionModel.fromJson(eachPlacePrediction),
+                  PredictionModel.fromNominatim(eachPlacePrediction),
             )
             .toList();
 
@@ -47,10 +75,17 @@ class _SearchDestinationPlaceState extends State<SearchDestinationPlace> {
           setState(() {
             dropOffPredictionsPlacesList = predictionsList;
           });
-          print("predicted places = " + predictionsResultsInJson.toString());
         }
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    pickUpTextEditingController.dispose();
+    destinationTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -106,7 +141,7 @@ class _SearchDestinationPlaceState extends State<SearchDestinationPlace> {
                             ),
                             const Center(
                               child: Text(
-                                "Set Dropoff Location",
+                                "Varış Konumunu Seç",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
@@ -137,7 +172,7 @@ class _SearchDestinationPlaceState extends State<SearchDestinationPlace> {
                                   child: TextField(
                                     controller: pickUpTextEditingController,
                                     decoration: const InputDecoration(
-                                      hintText: "Pickup Address",
+                                      hintText: "Alış adresi",
                                       fillColor: Colors.white60,
                                       filled: true,
                                       border: InputBorder.none,
@@ -175,10 +210,10 @@ class _SearchDestinationPlaceState extends State<SearchDestinationPlace> {
                                   child: TextField(
                                     controller: destinationTextEditingController,
                                     onChanged: (value) {
-                                      searchLocation(value);
+                                      scheduleSearch(value);
                                     },
                                     decoration: const InputDecoration(
-                                      hintText: "Destination Address",
+                                      hintText: "Varış adresi",
                                       fillColor: Colors.white60,
                                       filled: true,
                                       border: InputBorder.none,
