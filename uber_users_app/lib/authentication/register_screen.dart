@@ -78,7 +78,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration: InputDecoration(
                     fillColor: Colors.grey,
                     counterText: '',
-                    hintText: '313 7426256',
+                    hintText: '5XX XXX XX XX',
                     hintStyle: const TextStyle(
                       color: Colors.grey,
                       fontSize: 18,
@@ -152,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             color: Colors.white,
                           )
                         : const Text(
-                            "Continue",
+                            "Devam et",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -175,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
-                        "Or",
+                        "veya",
                         style: TextStyle(
                           color: Colors.grey.shade400,
                         ),
@@ -259,7 +259,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                "Continue with Google",
+                                "Google ile devam et",
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 14,
@@ -284,7 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     label: const Text(
-                      "Continue with Apple",
+                      "Apple ile devam et",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 14,
@@ -300,7 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 15,
                 ),
                 const Text(
-                  "By proceeding, you consent to get calls, whatsApp or SMS messages,including by automated means, from Uber and its affiliates to the number provided.",
+                  "Devam ederek Kocaeli TAG tarafından doğrulama ve yolculuk bilgilendirmesi amacıyla SMS veya arama almayı kabul edersiniz.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey,
@@ -322,10 +322,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Validate the phone number
     if (phoneNumber.isEmpty ||
         phoneNumber.length != 10 ||
-        !RegExp(r'^[3][0-9]{9}$').hasMatch(phoneNumber)) {
+        !RegExp(r'^5[0-9]{9}$').hasMatch(phoneNumber)) {
       // Show error if the phone number is invalid
       commonMethods.displaySnackBar(
-        "Please enter a valid mobile number.",
+        "Lütfen 5 ile başlayan 10 haneli telefon numarası girin.",
         context,
       );
       return;
