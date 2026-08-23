@@ -19,6 +19,7 @@ import 'package:uber_users_app/authentication/register_screen.dart';
 import 'package:uber_users_app/pages/profile_page.dart';
 import 'package:uber_users_app/pages/search_destination_place.dart';
 import 'package:uber_users_app/widgets/custome_drawer.dart';
+import 'package:uber_users_app/widgets/free_map_view.dart';
 import 'package:uber_users_app/widgets/sign_out_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../global/global_var.dart';
@@ -107,14 +108,11 @@ class _HomePageState extends State<HomePage> {
   getCurrentLiveLocationOfUser() async {
     Position positionOfUser = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-    currentPositionOfUser = positionOfUser;
-    LatLng positionOfUserInLatLng = LatLng(
-        currentPositionOfUser!.latitude, currentPositionOfUser!.longitude);
-
-    CameraPosition cameraPosition =
-        CameraPosition(target: positionOfUserInLatLng, zoom: 15);
-    controllerGoogleMap!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    if (!mounted) return;
+    setState(() {
+      currentPositionOfUser = positionOfUser;
+      bottomMapPadding = 300;
+    });
 
     await CommonMethods.convertGeoGraphicCoOrdinatesIntoHumanReadableAddress(
         currentPositionOfUser!, context);
@@ -266,8 +264,8 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    controllerGoogleMap!
-        .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 72));
+    controllerGoogleMap
+        ?.animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 72));
 
     //add markers to pickup and dropOffDestination points
     Marker pickUpPointMarker = Marker(
@@ -794,6 +792,14 @@ class _HomePageState extends State<HomePage> {
   CommonMethods commonMethods = CommonMethods();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getCurrentLiveLocationOfUser();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     String? userAddress = Provider.of<AppInfoClass>(context, listen: false)
                 .pickUpLocation !=
@@ -874,29 +880,26 @@ class _HomePageState extends State<HomePage> {
         drawer: CustomDrawer(userName: userName, authProvider: authProvider),
         body: Stack(
           children: [
-            ///google map
-            GoogleMap(
-              padding: EdgeInsets.only(top: 26, bottom: bottomMapPadding),
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              polylines: polylineSet,
-              markers: markerSet,
-              circles: circleSet,
-              initialCameraPosition: googlePlexInitialPosition,
-              onMapCreated: (GoogleMapController mapController) async {
-                controllerGoogleMap = mapController;
-                //updateMapTheme(controllerGoogleMap!);
-
-                googleMapCompleterController.complete(controllerGoogleMap);
-
-                setState(() {
-                  bottomMapPadding = 300;
-                });
-
-                await getCurrentLiveLocationOfUser();
-              },
+            FreeMapView(
+              latitude: currentPositionOfUser?.latitude ?? 40.8269,
+              longitude: currentPositionOfUser?.longitude ?? 29.3747,
+              zoom: currentPositionOfUser == null ? 13 : 15,
+              pickup: appProvider.pickUpLocation?.latitudePosition == null
+                  ? null
+                  : MapCoordinate(
+                      appProvider.pickUpLocation!.latitudePosition!,
+                      appProvider.pickUpLocation!.longitudePosition!,
+                    ),
+              dropoff: appProvider.dropOffLocation?.latitudePosition == null
+                  ? null
+                  : MapCoordinate(
+                      appProvider.dropOffLocation!.latitudePosition!,
+                      appProvider.dropOffLocation!.longitudePosition!,
+                    ),
+              route: polylineCoOrdinates
+                  .map((point) =>
+                      MapCoordinate(point.latitude, point.longitude))
+                  .toList(),
             ),
 
             ///drawer button
