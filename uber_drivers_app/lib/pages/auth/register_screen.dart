@@ -19,15 +19,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController phoneController = TextEditingController();
 
   Country selectedCountry = Country(
-    phoneCode: '92',
-    countryCode: 'PK',
+    phoneCode: '90',
+    countryCode: 'TR',
     e164Sc: 0,
     geographic: true,
     level: 1,
-    name: 'Pakistan',
-    example: 'Pakistan',
-    displayName: 'Pakistan',
-    displayNameNoCountryCode: 'PK',
+    name: 'Türkiye',
+    example: 'Türkiye',
+    displayName: 'Türkiye',
+    displayNameNoCountryCode: 'TR',
     e164Key: '',
   );
 
@@ -51,7 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Enter Your Mobile Number",
+                  "Cep telefonu numaranızı girin",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
