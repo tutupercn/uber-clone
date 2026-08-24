@@ -27,7 +27,7 @@ class _TripsPageState extends State<TripsPage> {
               Container(
                 alignment: Alignment.topLeft,
                 child: const Text(
-                  "Manage Trips",
+                  "Yolculuk Yönetimi",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -39,13 +39,13 @@ class _TripsPageState extends State<TripsPage> {
               ),
               Row(
                 children: [
-                  cMethods.header(2, "TRIP ID"),
-                  cMethods.header(1, "USER NAME"),
-                  cMethods.header(1, "DRIVER NAME"),
-                  cMethods.header(1, "CAR DETAILS"),
-                  cMethods.header(1, "TIMING"),
-                  cMethods.header(1, "FARE"),
-                  cMethods.header(1, "VIEW DETAILS"),
+                  cMethods.header(2, "YOLCULUK NO"),
+                  cMethods.header(1, "YOLCU"),
+                  cMethods.header(1, "SÜRÜCÜ"),
+                  cMethods.header(1, "ARAÇ"),
+                  cMethods.header(1, "TARİH"),
+                  cMethods.header(1, "ÜCRET"),
+                  cMethods.header(1, "DETAY"),
                 ],
               ),
               const SizedBox(

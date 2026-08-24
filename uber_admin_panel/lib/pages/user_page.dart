@@ -24,7 +24,7 @@ class _UserPageState extends State<UserPage> {
               Container(
                 alignment: Alignment.topLeft,
                 child: const Text(
-                  "Manage Users",
+                  "Kullanıcı Yönetimi",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -34,10 +34,10 @@ class _UserPageState extends State<UserPage> {
               Row(
                 children: [
                   //commonMethods.header(2, "USERS ID"),
-                  commonMethods.header(1, "USER NAME"),
-                  commonMethods.header(1, "USER EMAIL"),
-                  commonMethods.header(1, "PHONE"),
-                  commonMethods.header(1, "ACTIONS"),
+                  commonMethods.header(1, "AD SOYAD"),
+                  commonMethods.header(1, "E-POSTA"),
+                  commonMethods.header(1, "TELEFON"),
+                  commonMethods.header(1, "İŞLEMLER"),
                 ],
               ),
               const SizedBox(

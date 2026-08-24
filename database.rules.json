@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.token.admin === true)",
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    "drivers": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && (auth.uid === $uid || auth.token.admin === true)"
+      }
+    },
+    "onlineDrivers": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "tripRequest": {
+      ".read": "auth != null",
+      ".indexOn": ["userID", "driverId", "status"],
+      "$tripId": {
+        ".write": "auth != null && (auth.token.admin === true || (!data.exists() && newData.child('userID').val() === auth.uid) || data.child('userID').val() === auth.uid || data.child('driverId').val() === auth.uid || (data.child('driverId').val() === 'waiting' && newData.child('driverId').val() === auth.uid && root.child('drivers').child(auth.uid).exists()))",
+        ".validate": "newData.hasChildren(['userID', 'driverId', 'status']) && newData.child('userID').isString() && newData.child('driverId').isString() && newData.child('status').isString() && (!data.exists() || newData.child('userID').val() === data.child('userID').val()) && (!data.exists() || newData.child('driverId').val() === data.child('driverId').val() || auth.token.admin === true || (data.child('driverId').val() === 'waiting' && newData.child('driverId').val() === auth.uid && root.child('drivers').child(auth.uid).exists()))"
+      }
+    }
+  }
+}

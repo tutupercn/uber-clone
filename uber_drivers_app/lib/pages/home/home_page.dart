@@ -1,20 +1,14 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uber_drivers_app/global/global.dart';
 import 'package:uber_drivers_app/providers/registration_provider.dart';
+import 'package:uber_drivers_app/widgets/free_map_view.dart';
 
-import '../../methods/map_theme_methods.dart';
 import '../../pushNotifications/push_notification.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,29 +19,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final Completer<GoogleMapController> googleMapCompleterController =
-      Completer<GoogleMapController>();
-  GoogleMapController? controllerGoogleMap;
   Position? currentPositionOfDriver;
   Color colorToShow = Colors.green;
   String titleToShow = "GO ONLINE NOW";
   bool isDriverAvailable = false;
   DatabaseReference? newTripRequestReference;
-  MapThemeMethods themeMethods = MapThemeMethods();
-
   getCurrentLiveLocationOfDriver() async {
     Position positionOfUser = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.bestForNavigation);
-    currentPositionOfDriver = positionOfUser;
-    driverCurrentPosition = currentPositionOfDriver;
-
-    LatLng positionOfUserInLatLng = LatLng(
-        currentPositionOfDriver!.latitude, currentPositionOfDriver!.longitude);
-
-    CameraPosition cameraPosition =
-        CameraPosition(target: positionOfUserInLatLng, zoom: 15);
-    controllerGoogleMap!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    if (!mounted) return;
+    setState(() {
+      currentPositionOfDriver = positionOfUser;
+      driverCurrentPosition = positionOfUser;
+    });
   }
 
   _loadDriverStatus() async {
@@ -92,7 +76,11 @@ class _HomePageState extends State<HomePage> {
   setAndGetLocationUpdates() {
     positionStreamHomePage =
         Geolocator.getPositionStream().listen((Position position) {
-      currentPositionOfDriver = position;
+      if (!mounted) return;
+      setState(() {
+        currentPositionOfDriver = position;
+        driverCurrentPosition = position;
+      });
 
       if (isDriverAvailable == true) {
         Geofire.setLocation(
@@ -102,9 +90,6 @@ class _HomePageState extends State<HomePage> {
         );
       }
 
-      LatLng positionLatLng = LatLng(position.latitude, position.longitude);
-      controllerGoogleMap!
-          .animateCamera(CameraUpdate.newLatLng(positionLatLng));
     });
   }
 
@@ -129,6 +114,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     _loadDriverStatus();
+    getCurrentLiveLocationOfDriver();
     initializePushNotificationSystem();
     Provider.of<RegistrationProvider>(context, listen: false)
         .retrieveCurrentDriverInfo();
@@ -141,22 +127,10 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         body: Stack(
           children: [
-            ///google map
-            GoogleMap(
-              padding: const EdgeInsets.only(top: 136),
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              zoomControlsEnabled: false,
-              myLocationButtonEnabled: false,
-              initialCameraPosition: googlePlexInitialPosition,
-              onMapCreated: (GoogleMapController mapController) {
-                controllerGoogleMap = mapController;
-                //themeMethods.updateMapTheme(controllerGoogleMap!);
-
-                googleMapCompleterController.complete(controllerGoogleMap);
-
-                getCurrentLiveLocationOfDriver();
-              },
+            FreeMapView(
+              latitude: currentPositionOfDriver?.latitude ?? 40.8269,
+              longitude: currentPositionOfDriver?.longitude ?? 29.3747,
+              zoom: currentPositionOfDriver == null ? 13 : 15,
             ),
 
             Container(

@@ -7,7 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:uber_users_app/appInfo/app_info.dart';
-import 'package:uber_users_app/global/global_var.dart';
 import 'package:uber_users_app/models/address_models.dart';
 
 import '../models/direction_details.dart';
@@ -30,8 +29,14 @@ class CommonMethods {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  static sendRequestToAPI(String apiUrl) async {
-    http.Response responseFromAPI = await http.get(Uri.parse(apiUrl));
+  static sendRequestToAPI(
+    String apiUrl, {
+    Map<String, String>? headers,
+  }) async {
+    http.Response responseFromAPI = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
 
     try {
       if (responseFromAPI.statusCode == 200) {
@@ -53,12 +58,18 @@ class CommonMethods {
       Position position, BuildContext context) async {
     String humanReadableAddress = "";
     String apiGeoCodingUrl =
-        "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$googleMapKey";
+        "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${position.latitude}&lon=${position.longitude}&accept-language=tr";
 
-    var responseFromAPI = await sendRequestToAPI(apiGeoCodingUrl);
+    var responseFromAPI = await sendRequestToAPI(
+      apiGeoCodingUrl,
+      headers: const {
+        'User-Agent': 'KocaeliTAG/1.0 (com.kocaelitag.yolcu)',
+        'Accept-Language': 'tr',
+      },
+    );
 
     if (responseFromAPI != "error") {
-      humanReadableAddress = responseFromAPI["results"][0]["formatted_address"];
+      humanReadableAddress = responseFromAPI["display_name"] ?? "";
 
       AddressModel model = AddressModel();
       model.humanReadableAddress = humanReadableAddress;
@@ -90,18 +101,19 @@ class CommonMethods {
   static Future<DirectionDetails?> getDirectionDetailsFromAPI(
       LatLng source, LatLng destination) async {
     String urlDirectionAPI =
-        "https://maps.googleapis.com/maps/api/directions/json?destination=${destination.latitude},${destination.longitude}&origin=${source.latitude},${source.longitude}&mode=driving&key=$googleMapKey";
+        "https://router.project-osrm.org/route/v1/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?overview=full&geometries=polyline&steps=false";
 
-    print("URL: $urlDirectionAPI"); // Debugging: Log the URL
-
-    var responseFromDirectionAPI = await sendRequestToAPI(urlDirectionAPI);
+    var responseFromDirectionAPI = await sendRequestToAPI(
+      urlDirectionAPI,
+      headers: const {
+        'User-Agent': 'KocaeliTAG/1.0 (com.kocaelitag.yolcu)',
+      },
+    );
 
     if (responseFromDirectionAPI == "error") {
       print("Error in response"); // Debugging: Log error
       return null;
     }
-
-    print("Response: $responseFromDirectionAPI"); // Debugging: Log the response
 
     if (responseFromDirectionAPI["routes"] == null ||
         responseFromDirectionAPI["routes"].isEmpty) {
@@ -111,16 +123,16 @@ class CommonMethods {
 
     DirectionDetails directionDetails = DirectionDetails();
     try {
+      final route = responseFromDirectionAPI["routes"][0];
+      final distanceMeters = (route["distance"] as num).round();
+      final durationSeconds = (route["duration"] as num).round();
       directionDetails.distanceTextString =
-          responseFromDirectionAPI["routes"][0]["legs"][0]["distance"]["text"];
-      directionDetails.distanceValueDigit =
-          responseFromDirectionAPI["routes"][0]["legs"][0]["distance"]["value"];
+          "${(distanceMeters / 1000).toStringAsFixed(1)} km";
+      directionDetails.distanceValueDigit = distanceMeters;
       directionDetails.durationTextString =
-          responseFromDirectionAPI["routes"][0]["legs"][0]["duration"]["text"];
-      directionDetails.durationValueDigit =
-          responseFromDirectionAPI["routes"][0]["legs"][0]["duration"]["value"];
-      directionDetails.encodedPoints =
-          responseFromDirectionAPI["routes"][0]["overview_polyline"]["points"];
+          "${(durationSeconds / 60).ceil()} mins";
+      directionDetails.durationValueDigit = durationSeconds;
+      directionDetails.encodedPoints = route["geometry"];
     } catch (e) {
       print("Error processing response data: $e");
       return null;
@@ -130,11 +142,11 @@ class CommonMethods {
 
   calculateFareAmountInPKR(DirectionDetails directionDetails,
       {double surgeMultiplier = 1.0}) {
-    double distancePerKmAmountPKR = 20; // 20 PKR per km
-    double durationPerMinuteAmountPKR = 15; // 15 PKR per minute
-    double baseFareAmountPKR = 150; // Base fare in PKR
-    double bookingFeePKR = 50; // Booking fee in PKR
-    double minimumFarePKR = 200; // Minimum fare in PKR
+    double distancePerKmAmountPKR = 22;
+    double durationPerMinuteAmountPKR = 2;
+    double baseFareAmountPKR = 60;
+    double bookingFeePKR = 10;
+    double minimumFarePKR = 90;
 
     // Calculate fare based on distance and time
     double totalDistanceTravelledFareAmountPKR =

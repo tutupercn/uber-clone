@@ -104,10 +104,10 @@ class _NotificationDialogState extends State<NotificationDialog> {
         );
       } else {
         String message = newTripStatusValue == "cancelled"
-            ? "Trip Request has been Cancelled by user."
+            ? "Yolculuk talebi kullanıcı tarafından iptal edildi."
             : newTripStatusValue == "timeout"
-                ? "Trip Request timed out."
-                : "Trip Request removed. Not Found.";
+                ? "Yolculuk talebinin süresi doldu."
+                : "Yolculuk talebi artık bulunmuyor.";
         cMethods.displaySnackBar(message, context);
       }
     });
@@ -116,11 +116,11 @@ class _NotificationDialogState extends State<NotificationDialog> {
   @override
   Widget build(BuildContext context) {
     // Null safety and string handling
-    final String fareAmount = widget.fareAmount ?? "N/A";
+    final String fareAmount = widget.fareAmount ?? "Belirtilmedi";
     final String bidAmount =
         widget.bidAmount == "null" || widget.bidAmount == null
-            ? "No Bid"
-            : "Rs ${widget.bidAmount}";
+            ? "Teklif yok"
+            : "₺${widget.bidAmount}";
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -147,7 +147,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
             const SizedBox(height: 15.0),
 
             const Text(
-              "NEW TRIP REQUEST",
+              "YENİ YOLCULUK TALEBİ",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -173,7 +173,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       const SizedBox(width: 18),
                       Expanded(
                         child: Text(
-                          widget.tripDetailsInfo?.pickupAddress ?? "Unknown",
+                          widget.tripDetailsInfo?.pickupAddress ?? "Konum bilinmiyor",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: const TextStyle(
@@ -191,7 +191,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       const SizedBox(width: 18),
                       Expanded(
                         child: Text(
-                          widget.tripDetailsInfo?.dropOffAddress ?? "Unknown",
+                          widget.tripDetailsInfo?.dropOffAddress ?? "Konum bilinmiyor",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: const TextStyle(
@@ -212,12 +212,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Actual Fare Amount: Rs $fareAmount",
+                    "Hesaplanan ücret: ₺$fareAmount",
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Bidded Amount: $bidAmount",
+                    "Yolcunun teklifi: $bidAmount",
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],
@@ -243,7 +243,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pink),
                       child: const Text(
-                        "DECLINE",
+                        "REDDET",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -261,7 +261,7 @@ class _NotificationDialogState extends State<NotificationDialog> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green),
                       child: const Text(
-                        "ACCEPT",
+                        "KABUL ET",
                         style: TextStyle(color: Colors.white),
                       ),
                     ),

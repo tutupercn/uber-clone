@@ -22,7 +22,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
         if (snapshotData.hasError) {
           return const Center(
             child: Text(
-              "Error occurred. Try later",
+              "Bir hata oluştu. Daha sonra tekrar deneyin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -31,7 +31,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
         if (snapshotData.connectionState == ConnectionState.none) {
           return const Center(
             child: Text(
-              "No connection. Please check your internet.",
+              "Bağlantı yok. İnternetinizi kontrol edin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -40,7 +40,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
             snapshotData.data?.snapshot.value == null) {
           return const Center(
             child: Text(
-              "No data available",
+              "Sürücü bilgisi bulunamadı.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -54,7 +54,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
             backgroundColor: Color.fromARGB(221, 39, 57, 99),
             centerTitle: true,
             title: const Text(
-              "Driver Details",
+              "Sürücü Detayları",
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -100,15 +100,15 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Name: ${dataMap['firstName']} ${dataMap['secondName']}",
+              "Ad soyad: ${dataMap['firstName']} ${dataMap['secondName']}",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text("Phone: ${dataMap['phoneNumber']}"),
-            Text("Email: ${dataMap['email']}"),
-            Text("CNIC Number: ${dataMap['cnicNumber']}"),
-            Text("Address: ${dataMap['address']}"),
-            Text("Date of Birth: ${dataMap['dob']}"),
+            Text("Telefon: ${dataMap['phoneNumber']}"),
+            Text("E-posta: ${dataMap['email']}"),
+            Text("T.C. kimlik numarası: ${dataMap['cnicNumber']}"),
+            Text("Adres: ${dataMap['address']}"),
+            Text("Doğum tarihi: ${dataMap['dob']}"),
           ],
         ),
       ],
@@ -120,7 +120,7 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "CNIC Information:",
+          "Kimlik bilgileri:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
@@ -128,9 +128,9 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildImage(dataMap['cnicFrontImage'], "Front CNIC"),
-            _buildImage(dataMap['cnicBackImage'], "Back CNIC"),
-            _buildImage(dataMap['driverFaceWithCnic'], "Selfie with CNIC"),
+            _buildImage(dataMap['cnicFrontImage'], "Kimlik ön yüz"),
+            _buildImage(dataMap['cnicBackImage'], "Kimlik arka yüz"),
+            _buildImage(dataMap['driverFaceWithCnic'], "Kimlikle selfie"),
           ],
         ),
       ],
@@ -142,18 +142,18 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Driving License:",
+          "Sürücü belgesi:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        Text('Driving License Number: ${dataMap['drivingLicenseNumber']}'),
+        Text('Ehliyet numarası: ${dataMap['drivingLicenseNumber']}'),
         const SizedBox(height: 20),
         Wrap(
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildImage(dataMap['drivingLicenseFrontImage'], "Front License"),
-            _buildImage(dataMap['drivingLicenseBackImage'], "Back License"),
+            _buildImage(dataMap['drivingLicenseFrontImage'], "Ehliyet ön yüz"),
+            _buildImage(dataMap['drivingLicenseBackImage'], "Ehliyet arka yüz"),
           ],
         ),
       ],
@@ -165,16 +165,16 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Vehicle Information:",
+          "Araç bilgileri:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        Text("Vehicle Type: ${dataMap['vehicleInfo']['type']}"),
-        Text("Brand: ${dataMap['vehicleInfo']['brand']}"),
-        Text("Color: ${dataMap['vehicleInfo']['color']}"),
-        Text("Year: ${dataMap['vehicleInfo']['productionYear']}"),
+        Text("Araç türü: ${dataMap['vehicleInfo']['type']}"),
+        Text("Marka: ${dataMap['vehicleInfo']['brand']}"),
+        Text("Renk: ${dataMap['vehicleInfo']['color']}"),
+        Text("Model yılı: ${dataMap['vehicleInfo']['productionYear']}"),
         Text(
-            "Plate Number: ${dataMap['vehicleInfo']['registrationPlateNumber']}"),
+            "Plaka: ${dataMap['vehicleInfo']['registrationPlateNumber']}"),
         const SizedBox(height: 10),
         Wrap(
           spacing: 20,
@@ -182,10 +182,10 @@ class _DriverDataScreenState extends State<DriverDataScreen> {
           children: [
             _buildImage(
                 dataMap['vehicleInfo']['registrationCertificateFrontImage'],
-                "Front Certificate"),
+                "Ruhsat ön yüz"),
             _buildImage(
                 dataMap['vehicleInfo']['registrationCertificateBackImage'],
-                "Back Certificate"),
+                "Ruhsat arka yüz"),
           ],
         ),
       ],

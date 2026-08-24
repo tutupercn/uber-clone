@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:uber_drivers_app/const.dart';
 import '../global/global.dart';
 import '../models/direction_details.dart';
 
@@ -62,8 +61,14 @@ class CommonMethods {
     }
   }
 
-  static sendRequestToAPI(String apiUrl) async {
-    http.Response responseFromAPI = await http.get(Uri.parse(apiUrl));
+  static sendRequestToAPI(
+    String apiUrl, {
+    Map<String, String>? headers,
+  }) async {
+    http.Response responseFromAPI = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
 
     try {
       if (responseFromAPI.statusCode == 200) {
@@ -78,43 +83,49 @@ class CommonMethods {
     }
   }
 
-  ///Directions API
+  /// OSRM route service used during development.
   static Future<DirectionDetails?> getDirectionDetailsFromAPI(
       LatLng source, LatLng destination) async {
     String urlDirectionsAPI =
-        "https://maps.googleapis.com/maps/api/directions/json?destination=${destination.latitude},${destination.longitude}&origin=${source.latitude},${source.longitude}&mode=driving&key=$googleMapKey";
+        "https://router.project-osrm.org/route/v1/driving/${source.longitude},${source.latitude};${destination.longitude},${destination.latitude}?overview=full&geometries=polyline&steps=false";
 
-    var responseFromDirectionsAPI = await sendRequestToAPI(urlDirectionsAPI);
-    print("This is response from direction api $responseFromDirectionsAPI");
+    var responseFromDirectionsAPI = await sendRequestToAPI(
+      urlDirectionsAPI,
+      headers: const {
+        'User-Agent': 'KocaeliTAG/1.0 (com.kocaelitag.surucu)',
+      },
+    );
     if (responseFromDirectionsAPI == "error") {
       return null;
     }
 
+    if (responseFromDirectionsAPI["routes"] == null ||
+        responseFromDirectionsAPI["routes"].isEmpty) {
+      return null;
+    }
+
     DirectionDetails detailsModel = DirectionDetails();
-
+    final route = responseFromDirectionsAPI["routes"][0];
+    final distanceMeters = (route["distance"] as num).round();
+    final durationSeconds = (route["duration"] as num).round();
     detailsModel.distanceTextString =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["distance"]["text"];
-    detailsModel.distanceValueDigits =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["distance"]["value"];
-
+        "${(distanceMeters / 1000).toStringAsFixed(1)} km";
+    detailsModel.distanceValueDigits = distanceMeters;
     detailsModel.durationTextString =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["duration"]["text"];
-    detailsModel.durationValueDigits =
-        responseFromDirectionsAPI["routes"][0]["legs"][0]["duration"]["value"];
-
-    detailsModel.encodedPoints =
-        responseFromDirectionsAPI["routes"][0]["overview_polyline"]["points"];
+        "${(durationSeconds / 60).ceil()} dk";
+    detailsModel.durationValueDigits = durationSeconds;
+    detailsModel.encodedPoints = route["geometry"];
 
     return detailsModel;
   }
 
   calculateFareAmountInPKR(DirectionDetails directionDetails,
       {double surgeMultiplier = 1.0}) {
-    double distancePerKmAmountPKR = 20; // 20 PKR per km
-    double durationPerMinuteAmountPKR = 15; // 15 PKR per minute
-    double baseFareAmountPKR = 150; // Base fare in PKR
-    double bookingFeePKR = 50; // Booking fee in PKR
-    double minimumFarePKR = 200; // Minimum fare in PKR
+    double distancePerKmAmountPKR = 22;
+    double durationPerMinuteAmountPKR = 2;
+    double baseFareAmountPKR = 60;
+    double bookingFeePKR = 10;
+    double minimumFarePKR = 90;
 
     // Calculate fare based on distance and time
     double totalDistanceTravelledFareAmountPKR =

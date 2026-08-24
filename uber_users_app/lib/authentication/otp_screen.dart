@@ -31,7 +31,7 @@ class _OTPScreenState extends State<OTPScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Verification',
+                  'Telefon doğrulama',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class _OTPScreenState extends State<OTPScreen> {
                   height: 10,
                 ),
                 const Text(
-                  'Enter The OPT Code Sent To Your Phone Number',
+                  'Telefonunuza gönderilen 6 haneli doğrulama kodunu girin.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -108,7 +108,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 ),
 
                 const Text(
-                  'Didn\'t Receive Any Code?',
+                  'Doğrulama kodu gelmedi mi?',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _OTPScreenState extends State<OTPScreen> {
                     ),
                     onPressed: () {},
                     child: const Text(
-                      "Resend",
+                      "Tekrar gönder",
                       style: TextStyle(
                         fontSize: 16, // Button text size
                         color: Colors.black, // Button text color

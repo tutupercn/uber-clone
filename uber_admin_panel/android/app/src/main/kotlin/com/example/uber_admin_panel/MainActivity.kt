@@ -1,4 +1,4 @@
-package com.example.uber_admin_panel
+package com.kocaelitag.yonetim
 
 import io.flutter.embedding.android.FlutterActivity
 

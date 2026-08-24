@@ -1,0 +1,78 @@
+name: Flutter kontrolü
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - codex/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: ${{ matrix.app }} analizi
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: Yolcu
+            directory: uber_users_app
+          - app: Sürücü
+            directory: uber_drivers_app
+          - app: Yönetim
+            directory: uber_admin_panel
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@v4
+
+      - name: Flutter kur
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Flutter sürümünü göster
+        run: flutter --version
+
+      - name: Bağımlılıkları kur
+        run: flutter pub get
+
+      - name: Kod biçimini kontrol et
+        run: dart format --output=none --set-exit-if-changed lib
+        continue-on-error: true
+
+      - name: Statik analiz yap
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+  build-admin-web:
+    name: Yönetim paneli web derlemesi
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: uber_admin_panel
+    steps:
+      - name: Kaynak kodu al
+        uses: actions/checkout@v4
+
+      - name: Flutter kur
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Bağımlılıkları kur
+        run: flutter pub get
+
+      - name: Web panelini derle
+        run: flutter build web --release

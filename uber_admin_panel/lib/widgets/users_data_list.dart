@@ -25,7 +25,7 @@ class _UsersDataListState extends State<UsersDataList> {
           print("Error: ${snapshotData.error}");
           return const Center(
             child: Text(
-              "Error occurred. Try later",
+              "Bir hata oluştu. Daha sonra tekrar deneyin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -38,7 +38,7 @@ class _UsersDataListState extends State<UsersDataList> {
         if (snapshotData.connectionState == ConnectionState.none) {
           return const Center(
             child: Text(
-              "No connection. Please check your internet.",
+              "Bağlantı yok. İnternetinizi kontrol edin.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -48,7 +48,7 @@ class _UsersDataListState extends State<UsersDataList> {
             snapshotData.data?.snapshot.value == null) {
           return const Center(
             child: Text(
-              "No data available",
+              "Henüz kullanıcı bulunmuyor.",
               style: TextStyle(fontSize: 24, color: Colors.black),
             ),
           );
@@ -119,7 +119,7 @@ class _UsersDataListState extends State<UsersDataList> {
                                       listItems[index]["blockStatus"]);
                             },
                             child: const Text(
-                              "Block",
+                              "Engelle",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -146,7 +146,7 @@ class _UsersDataListState extends State<UsersDataList> {
                                       listItems[index]["blockStatus"]);
                             },
                             child: const Text(
-                              "Unblock",
+                              "Engeli kaldır",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,

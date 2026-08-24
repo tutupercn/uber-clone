@@ -27,7 +27,7 @@ class _DriverPageState extends State<DriverPage> {
               Container(
                 alignment: Alignment.topLeft,
                 child: const Text(
-                  "Manage Drivers",
+                  "Sürücü Yönetimi",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -38,12 +38,12 @@ class _DriverPageState extends State<DriverPage> {
                 children: [
                   //commonMethods.header(1, "PICTURE"),
                   // commonMethods.header(2, "DRIVER ID"),
-                  commonMethods.header(1, "NAME"),
-                  commonMethods.header(1, "CAR DETAILS"),
-                  commonMethods.header(1, "PHONE"),
-                  commonMethods.header(1, "TOTAL EARNING"),
-                  commonMethods.header(1, "ACTIONS"),
-                  commonMethods.header(1, "VIEW MORE"),
+                  commonMethods.header(1, "AD SOYAD"),
+                  commonMethods.header(1, "ARAÇ"),
+                  commonMethods.header(1, "TELEFON"),
+                  commonMethods.header(1, "TOPLAM KAZANÇ"),
+                  commonMethods.header(1, "İŞLEMLER"),
+                  commonMethods.header(1, "DETAY"),
                 ],
               ),
               const SizedBox(

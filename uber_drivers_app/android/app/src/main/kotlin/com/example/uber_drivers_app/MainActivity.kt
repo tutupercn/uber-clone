@@ -1,4 +1,4 @@
-package com.example.uber_drivers_app
+package com.kocaelitag.surucu
 
 import io.flutter.embedding.android.FlutterActivity
 
